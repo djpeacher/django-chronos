@@ -2,7 +2,9 @@
 
 Django middleware that shows you how fast your pages load, right in your browser. Displays request timing and query counts for your views and middleware.
 
-> TODO: Image
+<p align="center">
+    <img width="644" height="362" alt="django-chronos" src="https://github.com/user-attachments/assets/f1c61c50-d3a2-4a96-9078-40b2ea9b4430" />
+</p>
 
 ## Installation
 
