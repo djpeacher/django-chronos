@@ -21,7 +21,7 @@ pip install django-chronos
 ```python
 INSTALLED_APPS = [
     # ... your other apps
-    'chronos',
+    'django_chronos',
 ]
 ```
 
@@ -29,9 +29,9 @@ INSTALLED_APPS = [
 
 ```python
 MIDDLEWARE = [
-    'chronos.middleware.ChronosStartMiddleware',  # Must be first
+    'django_chronos.middleware.ChronosStartMiddleware',  # Must be first
     # ... your other middleware
-    'chronos.middleware.ChronosEndMiddleware',    # Must be last
+    'django_chronos.middleware.ChronosEndMiddleware',    # Must be last
 ]
 ```
 
