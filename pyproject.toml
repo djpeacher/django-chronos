@@ -1,0 +1,11 @@
+[project]
+name = "django-chronos"
+version = "250807"
+description = "Django middleware that shows you how fast your pages load, right in your browser."
+readme = "README.md"
+authors = [{name = "Jonathan Peacher"}]
+dependencies = ["django>=4.2"]
+
+[build-system]
+requires = ["uv_build>=0.8.3,<0.9.0"]
+build-backend = "uv_build"

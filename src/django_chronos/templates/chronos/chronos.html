@@ -1,0 +1,69 @@
+<style>
+    .chronos-container {
+        position: fixed;
+        bottom: 10px;
+        left: 10px;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 6px 8px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 11px;
+        z-index: 9999;
+    }
+    .chronos { border-collapse: collapse; }
+    .chronos th { text-align: left; }
+    .chronos td:not(:first-child) { text-align: right; }
+    .chronos th,
+    .chronos td { padding: 2px 6px; }
+    .chronos th:first-child,
+    .chronos td:first-child { padding-left: 0; }
+    .chronos th:last-child,
+    .chronos td:last-child { padding-right: 0; }
+    .chronos .border-bottom { border-bottom: 1px solid #555; }
+    .chronos .border-left { border-left: 1px solid #555; }
+</style>
+<div class="chronos-container">
+    <table class="chronos">
+        <thead>
+            <tr class="border-bottom">
+                <th>Section</th>
+                {% if debug %}
+                    <th class="border-left">CPU</th>
+                    <th>SQL</th>
+                    <th></th>
+                {% endif %}
+                <th class="border-left">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Middleware</td>
+                {% if debug %}
+                    <td class="border-left">{{ middleware_cpu_time }}ms</td>
+                    <td>{{ middleware_sql_time }}ms</td>
+                    <td>{{ middleware_sql_count }}q</td>
+                {% endif %}
+                <td class="border-left">{{ middleware_total_time }}ms</td>
+            </tr>
+            <tr class="border-bottom">
+                <td>View</td>
+                {% if debug %}
+                    <td class="border-left">{{ view_cpu_time }}ms</td>
+                    <td>{{ view_sql_time }}ms</td>
+                    <td>{{ view_sql_count }}q</td>
+                {% endif %}
+                <td class="border-left">{{ view_total_time }}ms</td>
+            </tr>
+            <tr>
+                <td>Total</td>
+                {% if debug %}
+                    <td class="border-left">{{ total_cpu_time }}ms</td>
+                    <td>{{ total_sql_time }}ms</td>
+                    <td>{{ total_sql_count }}q</td>
+                {% endif %}
+                <td class="border-left"><strong>{{ total_time }}ms</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
