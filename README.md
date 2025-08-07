@@ -1,4 +1,4 @@
-# django-chronos
+# django-chronos [![PyPI version](https://img.shields.io/pypi/v/django-chronos.svg)](https://pypi.org/project/django-chronos/)
 
 Django middleware that shows you how fast your pages load, right in your browser. Displays request timing and query counts for your views and middleware.
 
