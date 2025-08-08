@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import connection
 from django.template.loader import render_to_string
-from time import time
+from time import perf_counter
 
 # Timeline visualization:
 #
@@ -24,11 +24,11 @@ class ChronosStartMiddleware:
 
     def __call__(self, request):
         request.q1 = len(connection.queries)
-        request.t1 = time()
+        request.t1 = perf_counter()
 
         response = self.get_response(request)
 
-        request.t4 = time()
+        request.t4 = perf_counter()
         request.q4 = len(connection.queries)
 
         # Should we show stats?
@@ -105,11 +105,11 @@ class ChronosEndMiddleware:
 
     def __call__(self, request):
         request.q2 = len(connection.queries)
-        request.t2 = time()
+        request.t2 = perf_counter()
 
         response = self.get_response(request)
 
-        request.t3 = time()
+        request.t3 = perf_counter()
         request.q3 = len(connection.queries)
 
         return response
