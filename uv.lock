@@ -27,7 +27,7 @@ wheels = [
 
 [[package]]
 name = "django-chronos"
-version = "250807.1"
+version = "250808"
 source = { editable = "." }
 dependencies = [
     { name = "django" },
