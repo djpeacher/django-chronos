@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import connection
 from django.template.loader import render_to_string
 from time import perf_counter
+from types import SimpleNamespace
 
 # Timeline visualization:
 #
@@ -23,13 +24,14 @@ class ChronosStartMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        request.q1 = len(connection.queries)
-        request.t1 = perf_counter()
+        request.chronos = SimpleNamespace()
+        request.chronos.q1 = len(connection.queries)
+        request.chronos.t1 = perf_counter()
 
         response = self.get_response(request)
 
-        request.t4 = perf_counter()
-        request.q4 = len(connection.queries)
+        request.chronos.t4 = perf_counter()
+        request.chronos.q4 = len(connection.queries)
 
         # Should we show stats?
         show_in_production = getattr(settings, 'CHRONOS_SHOW_IN_PRODUCTION', False)
@@ -37,27 +39,29 @@ class ChronosStartMiddleware:
         if not display_stats:
             return response
 
+        chronos = request.chronos
+
         # Calculate query counts
-        middleware_sql_count       = (request.q2 - request.q1) + (request.q4 - request.q3)
-        view_sql_count             = request.q3 - request.q2
+        middleware_sql_count       = (chronos.q2 - chronos.q1) + (chronos.q4 - chronos.q3)
+        view_sql_count             = chronos.q3 - chronos.q2
         total_sql_count            = middleware_sql_count + view_sql_count
-        # assert total_sql_count == request.q4 - request.q1
+        # assert total_sql_count == chronos.q4 - chronos.q1
 
         # Calculate sql times
-        middleware_before_sql_time = sql_time(request.q1, request.q2)
-        view_sql_time              = sql_time(request.q2, request.q3)
-        middleware_after_sql_time  = sql_time(request.q3, request.q4)
+        middleware_before_sql_time = sql_time(chronos.q1, chronos.q2)
+        view_sql_time              = sql_time(chronos.q2, chronos.q3)
+        middleware_after_sql_time  = sql_time(chronos.q3, chronos.q4)
         middleware_sql_time        = middleware_before_sql_time + middleware_after_sql_time
         total_sql_time             = middleware_sql_time + view_sql_time
-        # assert total_sql_time == sql_time(request.q1, request.q4)
+        # assert total_sql_time == sql_time(chronos.q1, chronos.q4)
 
         # Calculate cpu times
-        middleware_before_cpu_time = (request.t2 - request.t1) - middleware_before_sql_time
-        view_cpu_time              = (request.t3 - request.t2) - view_sql_time
-        middleware_after_cpu_time  = (request.t4 - request.t3) - middleware_after_sql_time
+        middleware_before_cpu_time = (chronos.t2 - chronos.t1) - middleware_before_sql_time
+        view_cpu_time              = (chronos.t3 - chronos.t2) - view_sql_time
+        middleware_after_cpu_time  = (chronos.t4 - chronos.t3) - middleware_after_sql_time
         middleware_cpu_time        = middleware_before_cpu_time + middleware_after_cpu_time
         total_cpu_time             = middleware_cpu_time + view_cpu_time
-        # assert total_cpu_time == (request.t4 - request.t1) - total_sql_time
+        # assert total_cpu_time == (chronos.t4 - chronos.t1) - total_sql_time
 
         # Render stats
         context = {
@@ -104,13 +108,13 @@ class ChronosEndMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        request.q2 = len(connection.queries)
-        request.t2 = perf_counter()
+        request.chronos.q2 = len(connection.queries)
+        request.chronos.t2 = perf_counter()
 
         response = self.get_response(request)
 
-        request.t3 = perf_counter()
-        request.q3 = len(connection.queries)
+        request.chronos.t3 = perf_counter()
+        request.chronos.q3 = len(connection.queries)
 
         return response
 
